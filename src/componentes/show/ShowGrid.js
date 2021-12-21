@@ -14,14 +14,15 @@ const ShowGrid = ({data}) => {
             {data.map(({ show }) => {
                 const isStarred = starredShows.includes(show.id);
 
-                const onStarClick = useCallback(() => {
+                const onStarClick = useCallback(
+                    (showId, isStarred) => {
                     if(isStarred){
-                        dispatchStared({type: 'REMOVE', showId: show.id })
+                        dispatchStared({type: 'REMOVE', showId: showId })
                     }
                     else{
-                        dispatchStared({type: 'ADD', showId: show.id})
+                        dispatchStared({type: 'ADD', showId: showId})
                     }
-                }, [isStarred, show.id]);
+                }, [dispatchStared]);
 
                 return(
                     <ShowCard 
@@ -31,7 +32,7 @@ const ShowGrid = ({data}) => {
                         image={show.image ? show.image.medium : IMAGE_NOT_FOUND}
                         summary={show.summary}
                         onStarClick={onStarClick}
-                        isStarred={isStarred}
+                        isStarred={starredShows.includes(show.id)}
                     />
                 );
             })}
