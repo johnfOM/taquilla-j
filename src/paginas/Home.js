@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import ActorGrid from '../componentes/actor/ActorGrid';
 import CustomRadio from '../componentes/CustomRadio';
 import MainPageLayout from '../componentes/MainPageLayout';
@@ -6,6 +6,20 @@ import ShowGrid from '../componentes/show/ShowGrid';
 import { apiGet } from '../misc/config';
 import { useLastQuery } from '../misc/custom-hooks';
 import { RadioInputsWrapper, SearchButtonWrapper, SearchInput } from './Home.styled';
+
+const renderResultado = (resultado) => {
+    if(resultado && resultado.length === 0){
+        return <div>No hay resultados</div>
+    }
+
+    if(resultado && resultado.length > 0){
+        return resultado[0].show 
+        ? ( <ShowGrid data={resultado} /> ) 
+        : ( <ActorGrid data={resultado} /> )
+    };
+
+    return null;
+};
 
 const Home = () => {
     const [input, setInput] = useLastQuery();
@@ -21,9 +35,9 @@ const Home = () => {
             
     };
 
-    const onInputChange = (e) => {
+    const onInputChange = useCallback((e) => {
         setInput(e.target.value);
-    };
+    }, [setInput]);
     
     const onKeyDown = (e) => {
         if(e.keyCode === 13){
@@ -31,23 +45,9 @@ const Home = () => {
         }
     };
 
-    const onRadioChange = (e) => {
+    const onRadioChange = useCallback((e) => {
         setBuscarOptions(e.target.value);
-    };
-
-    const renderResultado = () => {
-        if(resultado && resultado.length === 0){
-            return <div>No hay resultados</div>
-        }
-
-        if(resultado && resultado.length > 0){
-            return resultado[0].show 
-            ? ( <ShowGrid data={resultado} /> ) 
-            : ( <ActorGrid data={resultado} /> )
-        };
-
-        return null;
-    };
+    }, []);
     
     return (
         <MainPageLayout>
@@ -84,7 +84,7 @@ const Home = () => {
             <SearchButtonWrapper>
                 <button type='button' onClick={onSearch}>Buscar</button>
             </SearchButtonWrapper>
-            {renderResultado()}
+            {renderResultado(resultado)}
         </MainPageLayout>
     );
 };
